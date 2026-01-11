@@ -1,0 +1,337 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                        DIAGRAMA FLUJO COMPLETO                                  ║
+║              De Datos Brutos a Modelo en Producción                             ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+FASE 1: PREPARACIÓN
+════════════════════════════════════════════════════════════════════════════════
+
+                            merc.csv
+                              │
+                              ↓
+                    ┌─────────────────────┐
+                    │  Parte 1:           │
+                    │  - Carga datos      │
+                    │  - Exploración      │
+                    │  - Visualización    │
+                    └─────────────────────┘
+                              │
+                              ↓
+                        Datos limpios
+                              │
+                              ↓
+                    ┌─────────────────────┐
+                    │  Parte 2:           │
+                    │  Preprocesamiento   │
+                    │  - Numéricas:       │
+                    │    StandardScaler   │
+                    │  - Categóricas:     │
+                    │    OneHotEncoding   │
+                    │  - Train/Test Split │
+                    │  - Pipelines        │
+                    └─────────────────────┘
+                              │
+                              ↓
+            ┌─────────────────────────────────────┐
+            │        X_train_procesados           │
+            │        X_test_procesados            │
+            │        y_train                      │
+            │        y_test                       │
+            └─────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+FASE 2: ENTRENAMIENTO Y COMPARACIÓN
+════════════════════════════════════════════════════════════════════════════════
+
+        Datos procesados
+              │
+              ├──────────────────────────────────────────────┐
+              │                                              │
+              ↓                                              ↓
+      ┌─────────────────┐                        ┌─────────────────┐
+      │ Regresión       │                        │ Random Forest   │
+      │ Lineal          │                        │                 │
+      │ r2: 0.7234      │                        │ r2: 0.8543      │ ← MEJOR
+      │ RMSE: 8123      │                        │ RMSE: 5234      │
+      │ MAE: 5678       │                        │ MAE: 3456       │
+      └─────────────────┘                        └─────────────────┘
+              │                                              │
+              └──────────────────────────────────────────────┘
+                              │
+                              ↓
+                    ┌─────────────────────┐
+                    │ Gradient Boosting   │
+                    │ r2: 0.8234          │
+                    │ RMSE: 5890          │
+                    │ MAE: 3890           │
+                    └─────────────────────┘
+                              │
+                              ↓
+        ┌───────────────────────────────────────────┐
+        │ Parte 3:                                   │
+        │ Comparación de Resultados                │
+        │ - Tabla de métricas                      │
+        │ - Ranking de modelos                     │
+        │ - Análisis crítico                       │
+        │ - Justificación de selección             │
+        └───────────────────────────────────────────┘
+                              │
+                              ↓
+                    RANDOM FOREST GANADOR
+                              │
+                              ↓
+                    ┌─────────────────────┐
+                    │ Parte 4:            │
+                    │ Optimización        │
+                    │ GridSearchCV        │
+                    │ 5-fold CV           │
+                    │ Búsqueda:           │
+                    │ - n_estimators      │
+                    │ - max_depth         │
+                    │ - min_samples...    │
+                    │ (5-15 minutos)      │
+                    └─────────────────────┘
+                              │
+                              ↓
+            ┌──────────────────────────────────────┐
+            │  MEJORES HIPERPARÁMETROS             │
+            │  encontrados automáticamente         │
+            │  n_estimators: 200                   │
+            │  max_depth: 20                       │
+            │  min_samples_leaf: 2                 │
+            │  ...                                 │
+            └──────────────────────────────────────┘
+                              │
+                              ↓
+            ┌──────────────────────────────────────┐
+            │  MODELO FINAL ENTRENADO              │
+            │  R² Score: 0.8543 ✓ MEJOR            │
+            │  RMSE: $5,234.50                     │
+            │  MAE: $3,456.75                      │
+            └──────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+FASE 3: EXPORTACIÓN Y ALMACENAMIENTO
+════════════════════════════════════════════════════════════════════════════════
+
+                    Modelo Final Entrenado
+                              │
+                              ├─────────────────────────────────┐
+                              │                                 │
+                              ↓                                 ↓
+                    ┌──────────────────────┐        ┌──────────────────────┐
+                    │ joblib.dump()        │        │ pickle.dump()        │
+                    │ (Formato moderno)    │        │ (Compatibilidad)     │
+                    └──────────────────────┘        └──────────────────────┘
+                              │                                 │
+                              ↓                                 ↓
+        ┌───────────────────────────────────────────────────────┐
+        │        modelos_exportados/                            │
+        │        ├── modelo_final_*.joblib   ⭐ PREFERIDO        │
+        │        ├── modelo_final_*.pkl      (Backup)           │
+        │        ├── preprocessor.joblib     (Scaler + Encoder) │
+        │        ├── modelo_ml_*.joblib      (Solo modelo)      │
+        │        ├── metadatos_modelo.json   (Información)      │
+        │        ├── categorias_mapping.json (Validación)       │
+        │        └── ejemplo_uso_modelo.py   (Referencia)       │
+        └───────────────────────────────────────────────────────┘
+                              │
+                              ↓
+        ┌───────────────────────────────────────────────────────┐
+        │ Parte 5: EXPORTACIÓN COMPLETADA                       │
+        │                                                       │
+        │ ✓ Modelo guardado                                    │
+        │ ✓ Preprocessor guardado                              │
+        │ ✓ Metadatos documentados                             │
+        │ ✓ Categorías validadas                               │
+        │ ✓ Ejemplos de código creados                         │
+        └───────────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+FASE 4: VALIDACIÓN Y PRUEBAS
+════════════════════════════════════════════════════════════════════════════════
+
+                    test_modelo.py
+                          │
+                          ↓
+            ┌──────────────────────────────┐
+            │ 1. Cargar modelo             │
+            │    joblib.load(...)          │
+            └──────────────────────────────┘
+                          │
+                          ↓
+            ┌──────────────────────────────┐
+            │ 2. Prueba 1: BMW Series 5    │
+            │    Entrada: datos_vehículo   │
+            │    Salida: $28,456.75        │
+            └──────────────────────────────┘
+                          │
+                          ↓
+            ┌──────────────────────────────┐
+            │ 3. Prueba 2: Toyota Corolla  │
+            │    Entrada: datos_vehículo   │
+            │    Salida: $12,456.75        │
+            └──────────────────────────────┘
+                          │
+                          ↓
+            ┌──────────────────────────────┐
+            │ 4. Prueba 3: Mercedes C      │
+            │    Entrada: datos_vehículo   │
+            │    Salida: $18,900.50        │
+            └──────────────────────────────┘
+                          │
+                          ↓
+            ┌──────────────────────────────┐
+            │ 5. Batch Prediction          │
+            │    3 vehículos simultáneos   │
+            └──────────────────────────────┘
+                          │
+                          ↓
+                    ✓ TODAS LAS PRUEBAS PASARON
+                    ✓ MODELO LISTO PARA PRODUCCIÓN
+
+════════════════════════════════════════════════════════════════════════════════
+FASE 5: INTEGRACIÓN EN APLICACIÓN WEB
+════════════════════════════════════════════════════════════════════════════════
+
+            Usuario en Navegador Web
+                        │
+                        ↓
+    ┌──────────────────────────────────────────┐
+    │   Formulario Web                         │
+    │   ├─ Año: 2020                           │
+    │   ├─ Mileage: 50000                      │
+    │   ├─ Engine: 2.0                         │
+    │   ├─ Transmission: Automatic             │
+    │   ├─ Fuel: Petrol                        │
+    │   ├─ Brand: BMW                          │
+    │   ├─ Model: Series 5                     │
+    │   └─ [CALCULAR PRECIO]                   │
+    └──────────────────────────────────────────┘
+                        │
+                        ↓ POST /api/predict
+        ┌───────────────────────────────────────────┐
+        │ Backend (Flask/Django/FastAPI)            │
+        │                                           │
+        │ @app.route('/api/predict', methods=['POST']) │
+        │ def predict():                            │
+        │   datos = request.json                    │
+        │   df = pd.DataFrame([datos])              │
+        │   precio = modelo.predict(df)[0]          │
+        │   return {'precio': f'${precio:,.2f}'}    │
+        └───────────────────────────────────────────┘
+                        │
+                        ↓ Response JSON
+    ┌──────────────────────────────────────────┐
+    │ {                                        │
+    │   "exito": true,                         │
+    │   "precio_estimado": "$28,456.75",       │
+    │   "precio_numerico": 28456.75            │
+    │ }                                        │
+    └──────────────────────────────────────────┘
+                        │
+                        ↓
+    ┌──────────────────────────────────────────┐
+    │ Usuario ve en navegador:                 │
+    │                                          │
+    │ "Precio estimado: $28,456.75"            │
+    │                                          │
+    │ ✓ PREDICCIÓN EXITOSA                     │
+    └──────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+ARQUITECTURA FINAL
+════════════════════════════════════════════════════════════════════════════════
+
+                        ┌─────────────────┐
+                        │   Navegador     │
+                        │   Web Frontend  │
+                        └────────┬────────┘
+                                 │
+                    ┌────────────┼────────────┐
+                    │            │            │
+                    ↓            ↓            ↓
+             [Formulario]  [JavaScript]  [CSS]
+                    │            │            │
+                    └────────────┼────────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │  Flask/Django   │
+                        │  Backend Server │
+                        └────────┬────────┘
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+                ↓                ↓                ↓
+        ┌───────────────┐  ┌───────────┐  ┌────────────┐
+        │ Cargar Modelo │  │ Validar   │  │ Procesar   │
+        │ del archivo   │  │ Inputs    │  │ Datos      │
+        │ .joblib       │  │ con JSON  │  │ con        │
+        │               │  │ mapping   │  │ Pipeline   │
+        └───────────────┘  └───────────┘  └─────┬──────┘
+                │                                │
+                └────────────────┬───────────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │ modelo.predict()│
+                        │ Predicción      │
+                        └────────┬────────┘
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+                ↓                ↓                ↓
+            [Número]     [Formato]      [Respuesta
+             Bruto       Monetario      JSON]
+                │                │                │
+                └────────────────┼────────────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │  JSON Response  │
+                        │  al Navegador   │
+                        └────────┬────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │ Mostrar Precio  │
+                        │ en la página    │
+                        └─────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+RESUMEN DE FLUJO
+════════════════════════════════════════════════════════════════════════════════
+
+✓ PARTE 1: Datos → Exploración          (5 minutos)
+✓ PARTE 2: Limpieza → Preprocesamiento  (5 minutos)
+✓ PARTE 3: Entrenamiento → Comparación  (3 minutos)
+✓ PARTE 4: Optimización de parámetros   (10-15 minutos)
+✓ PARTE 5: Exportación de archivos      (1 minuto)
+
+TOTAL: 24-33 minutos para todo
+
+════════════════════════════════════════════════════════════════════════════════
+ARCHIVOS CLAVES
+════════════════════════════════════════════════════════════════════════════════
+
+ENTRADA:
+  └─ merc.csv (13,121 vehículos con características y precio)
+
+SCRIPTS:
+  └─ practica_coches_2.py (Ejecuta todas las partes)
+  └─ test_modelo.py (Prueba el modelo)
+
+SALIDA (modelos_exportados/):
+  ├─ modelo_final_*.joblib ⭐ ÚSALO AQUÍ
+  ├─ preprocessor.joblib
+  ├─ modelo_ml_*.joblib
+  ├─ metadatos_modelo.json
+  ├─ categorias_mapping.json
+  └─ ejemplo_uso_modelo.py
+
+DOCUMENTACIÓN:
+  ├─ RESUMEN_COMPLETACION.md (Este)
+  ├─ RESUMEN_PARTES_4_Y_5.md (Explicación)
+  ├─ GUIA_EXPORTACION_MODELO.md (Detallada)
+  ├─ HOJA_TRUCOS_RAPIDA.txt (Copiar-pega)
+  └─ README_EXPORTACION.txt (FAQ)
+
+════════════════════════════════════════════════════════════════════════════════

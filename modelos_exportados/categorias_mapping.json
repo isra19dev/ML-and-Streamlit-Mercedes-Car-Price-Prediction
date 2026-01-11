@@ -1,0 +1,82 @@
+{
+    "transmission": {
+        "clases": [
+            "Automatic",
+            "Manual",
+            "Other",
+            "Semi-Auto"
+        ],
+        "num_clases": 4
+    },
+    "fuelType": {
+        "clases": [
+            "Diesel",
+            "Hybrid",
+            "Other",
+            "Petrol"
+        ],
+        "num_clases": 4
+    },
+    "brand": {
+        "clases": [
+            "180",
+            "220",
+            "230",
+            "A",
+            "B",
+            "C",
+            "CL",
+            "CLA",
+            "CLC",
+            "CLK",
+            "CLS",
+            "E",
+            "G",
+            "GL",
+            "GLA",
+            "GLB",
+            "GLC",
+            "GLE",
+            "GLS",
+            "M",
+            "R",
+            "S",
+            "SL",
+            "SLK",
+            "V",
+            "X-CLASS"
+        ],
+        "num_clases": 26
+    },
+    "model": {
+        "clases": [
+            "180",
+            "220",
+            "230",
+            "A Class",
+            "B Class",
+            "C Class",
+            "CL Class",
+            "CLA Class",
+            "CLC Class",
+            "CLK",
+            "CLS Class",
+            "E Class",
+            "G Class",
+            "GL Class",
+            "GLA Class",
+            "GLB Class",
+            "GLC Class",
+            "GLE Class",
+            "GLS Class",
+            "M Class",
+            "R Class",
+            "S Class",
+            "SL CLASS",
+            "SLK",
+            "V Class",
+            "X-CLASS"
+        ],
+        "num_clases": 26
+    }
+}

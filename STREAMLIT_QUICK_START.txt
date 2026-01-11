@@ -1,0 +1,93 @@
+# 🚀 COMIENZA AQUÍ - Streamlit en 3 Pasos
+
+## Paso 1️⃣: Asegúrate que el modelo está entrenado
+
+Si **NO** lo has hecho aún:
+
+```powershell
+cd "Practica 2 - Aplicacion web con ML"
+python practica_coches_2.py
+```
+
+⏱️ **Espera 15-20 minutos hasta que termine**
+
+✅ Cuando termine deberías ver:
+- Carpeta `modelos_exportados/` creada
+- Archivos del modelo dentro
+
+---
+
+## Paso 2️⃣: Instala Streamlit
+
+```powershell
+pip install streamlit
+```
+
+Solo necesitas hacerlo **una sola vez**.
+
+---
+
+## Paso 3️⃣: Ejecuta la interfaz
+
+```powershell
+cd "Practica 2 - Aplicacion web con ML"
+streamlit run app_streamlit.py
+```
+
+Se abrirá automáticamente en tu navegador:
+```
+http://localhost:8501
+```
+
+---
+
+## ✅ Listo!
+
+Ahora ves la interfaz completa con:
+- 🎨 Formulario bonito
+- 📊 Métricas del modelo
+- 🔮 Predicciones en tiempo real
+- ✨ Diseño profesional
+
+---
+
+## ⚠️ Si algo no funciona...
+
+### Error: "El modelo no está disponible"
+→ Ejecuta `python practica_coches_2.py` primero
+
+### Error: "Module not found"
+→ Instala: `pip install streamlit`
+
+### Error: "FileNotFoundError"
+→ Asegúrate de estar en el directorio correcto
+
+---
+
+## 🎯 Resumen de Archivos
+
+Lo que tienes:
+
+```
+├── practica_coches_2.py          ← Script para entrenar
+├── app_streamlit.py              ← Interfaz web (NUEVO)
+├── README_STREAMLIT.md           ← Guía completa (NUEVO)
+├── merc.csv                       ← Datos
+└── modelos_exportados/
+    └── (se crea al ejecutar practica_coches_2.py)
+```
+
+---
+
+## 💡 Quick Reference
+
+| Quiero hacer... | Comando |
+|-----------------|---------|
+| Entrenar modelo | `python practica_coches_2.py` |
+| Ver interfaz | `streamlit run app_streamlit.py` |
+| Instalar Streamlit | `pip install streamlit` |
+| Parar Streamlit | `Ctrl + C` en la terminal |
+
+---
+
+**¿Todo listo? ¡Adelante! 🎉**
