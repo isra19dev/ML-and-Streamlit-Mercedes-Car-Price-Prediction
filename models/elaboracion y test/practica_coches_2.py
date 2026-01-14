@@ -17,22 +17,19 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
-# ============================================================================
-# PARTE 1: CARGAR Y EXPLORAR EL DATASET
-# ============================================================================
-
+#! PARTE 1: CARGAR Y EXPLORAR EL DATASET
 print("=" * 80)
 print("CARGANDO Y EXPLORANDO DATASET")
 print("=" * 80)
 
-# Obtener la ruta del directorio del script
+#! Ruta del csv
 script_dir = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(script_dir, 'merc.csv')
+csv_path = os.path.join(script_dir, '..', '..', 'data', 'merc.csv')
 
-# Cargar el dataset
+#! Carga
 df = pd.read_csv(csv_path)
 
-# Información general del dataset
+#! Información general del dataset
 print(f"\n1. Forma del dataset: {df.shape}")
 print(f"\n2. Primeras filas:")
 print(df.head())
@@ -49,25 +46,23 @@ print(df.isnull().sum())
 print(f"\n6. Tipos de datos:")
 print(df.dtypes)
 
-# Análisis de la variable objetivo (precio)
+#! Análisis de la variable objetivo (precio)
 print(f"\n7. ANÁLISIS DE LA VARIABLE OBJETIVO (PRECIO):")
 print(f"   - Precio mínimo: ${df['price'].min():.2f}")
 print(f"   - Precio máximo: ${df['price'].max():.2f}")
 print(f"   - Precio medio: ${df['price'].mean():.2f}")
 print(f"   - Precio mediano: ${df['price'].median():.2f}")
 
-# ============================================================================
-# PARTE 2: PREPROCESAMIENTO (LIMPIEZA, CODIFICACIÓN Y ESCALADO)
-# ============================================================================
+#! PARTE 2: PREPROCESAMIENTO (LIMPIEZA, CODIFICACIÓN Y ESCALADO)
 
 print("\n" + "=" * 80)
 print("PARTE 2: PREPROCESAMIENTO DE DATOS")
 print("=" * 80)
 
-# Crear una copia del dataframe
+#! Crear una copia del dataframe
 df_processed = df.copy()
 
-# Eliminar espacios en blanco de columnas y datos
+#! Eliminar espacios en blanco de columnas y datos
 df_processed.columns = df_processed.columns.str.strip()
 for col in df_processed.select_dtypes(include=['object']).columns:
     df_processed[col] = df_processed[col].str.strip()
@@ -76,14 +71,14 @@ print(f"\n1. INFORMACIÓN INICIAL DEL DATASET:")
 print(f"   - Forma: {df_processed.shape}")
 print(f"   - Columnas: {df_processed.columns.tolist()}")
 
-# Extraer marca del modelo
+#! Extraer marca del modelo
 df_processed['brand'] = df_processed['model'].str.split().str[0]
 
 print(f"\n2. MARCAS DETECTADAS:")
 print(f"   - Total de marcas: {df_processed['brand'].nunique()}")
 print(f"   - Primeras 10 marcas: {df_processed['brand'].unique()[:10].tolist()}")
 
-# Definir características y variable objetivo
+#! Definir características y variable objetivo
 numeric_features = ['year', 'mileage', 'engineSize']
 categorical_features = ['transmission', 'fuelType', 'brand', 'model']
 all_features = numeric_features + categorical_features
@@ -97,7 +92,7 @@ print(f"   - Categóricas: {categorical_features}")
 print(f"   - Total de muestras: {X.shape[0]}")
 print(f"   - Total de características: {X.shape[1]}")
 
-# Verificar valores faltantes
+#! Verificar valores faltantes
 print(f"\n4. VALORES FALTANTES:")
 missing_values = X.isnull().sum()
 if missing_values.sum() == 0:
@@ -105,9 +100,7 @@ if missing_values.sum() == 0:
 else:
     print(missing_values[missing_values > 0])
 
-# ============================================================================
-# PASO 1: SEPARAR EN CONJUNTOS DE ENTRENAMIENTO Y TEST (PRIMERO!)
-# ============================================================================
+#! PASO 1: SEPARAR EN CONJUNTOS DE ENTRENAMIENTO Y TEST (PRIMERO!)
 
 print(f"\n5. SEPARACIÓN EN CONJUNTOS DE ENTRENAMIENTO Y TEST:")
 X_train, X_test, y_train, y_test = train_test_split(
@@ -118,23 +111,21 @@ print(f"   - Conjunto de entrenamiento: {X_train.shape[0]} muestras")
 print(f"   - Conjunto de test: {X_test.shape[0]} muestras")
 print(f"   - Proporción: {X_train.shape[0] / (X_train.shape[0] + X_test.shape[0]):.1%} / {X_test.shape[0] / (X_train.shape[0] + X_test.shape[0]):.1%}")
 
-# ============================================================================
-# PASO 2: CREAR PIPELINE DE PREPROCESAMIENTO CON COLUMNTRANSFORMER
-# ============================================================================
+#! PASO 2: CREAR PIPELINE DE PREPROCESAMIENTO CON COLUMNTRANSFORMER
 
 print(f"\n6. CREACIÓN DE PIPELINE DE PREPROCESAMIENTO:")
 
-# Definir transformaciones para variables numéricas
+#! Definir transformaciones para variables numéricas
 numeric_transformer = Pipeline(steps=[
     ('scaler', StandardScaler())
 ])
 
-# Definir transformaciones para variables categóricas
+#! Definir transformaciones para variables categóricas
 categorical_transformer = Pipeline(steps=[
     ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
 ])
 
-# Combinar transformaciones con ColumnTransformer
+#! Combinar transformaciones con ColumnTransformer
 preprocessor = ColumnTransformer(
     transformers=[
         ('num', numeric_transformer, numeric_features),
@@ -145,7 +136,7 @@ preprocessor = ColumnTransformer(
 print(f"   - Transformador numérico: StandardScaler")
 print(f"   - Transformador categórico: OneHotEncoding")
 
-# Aplicar el preprocesamiento
+#! Aplicar el preprocesamiento
 X_train_processed = preprocessor.fit_transform(X_train)
 X_test_processed = preprocessor.transform(X_test)
 
@@ -154,11 +145,13 @@ print(f"   - Shape X_train: {X_train.shape} → {X_train_processed.shape}")
 print(f"   - Shape X_test: {X_test.shape} → {X_test_processed.shape}")
 print(f"   - Características resultantes:")
 
-# Obtener nombres de características después de OneHotEncoding
+#! Obtener nombres de características después de OneHotEncoding
 feature_names = []
-# Nombres numéricos
+
+#! Nombres numéricos
 feature_names.extend(numeric_features)
-# Nombres categóricos (resultado de OneHotEncoding)
+
+#! Nombres categóricos (resultado de OneHotEncoding)
 cat_encoder = preprocessor.named_transformers_['cat']
 onehot_features = cat_encoder.named_steps['onehot'].get_feature_names_out(categorical_features)
 feature_names.extend(onehot_features)
@@ -171,24 +164,22 @@ print(f"\n   Primeras 20 características resultantes:")
 for i, fname in enumerate(feature_names[:20], 1):
     print(f"      {i}. {fname}")
 
-# ============================================================================
-# PARTE 3: ENTRENAMIENTO Y COMPARACIÓN DE MODELOS CON PIPELINES
-# ============================================================================
+#! PARTE 3: ENTRENAMIENTO Y COMPARACIÓN DE MODELOS CON PIPELINES
 
 print("\n" + "=" * 80)
 print("PARTE 3: ENTRENAMIENTO Y COMPARACIÓN DE 3 MODELOS")
 print("=" * 80)
 
-# Diccionario para almacenar resultados
+#! Diccionario para almacenar resultados
 resultados = {}
 modelos_entrenados = {}
 
-# ==================== MODELO 1: REGRESIÓN LINEAL ====================
+#! ==================== MODELO 1: REGRESIÓN LINEAL ====================
 print("\n" + "-" * 80)
 print("MODELO 1: REGRESIÓN LINEAL")
 print("-" * 80)
 
-# Pipeline completo: preprocesamiento + modelo
+#! Pipeline completo: preprocesamiento + modelo
 pipeline_lr = Pipeline(steps=[
     ('preprocessor', preprocessor),
     ('model', LinearRegression())
@@ -200,7 +191,7 @@ pipeline_lr.fit(X_train, y_train)
 print("2. Realizando predicciones en conjunto de test...")
 y_pred_lr = pipeline_lr.predict(X_test)
 
-# Calcular métricas
+#! Calcular métricas
 mse_lr = mean_squared_error(y_test, y_pred_lr)
 rmse_lr = np.sqrt(mse_lr)
 mae_lr = mean_absolute_error(y_test, y_pred_lr)
@@ -220,13 +211,13 @@ print(f"   - RMSE: ${rmse_lr:,.2f}")
 print(f"   - MAE: ${mae_lr:,.2f}")
 print(f"   - MSE: ${mse_lr:,.2f}")
 
-# ==================== MODELO 2: RANDOM FOREST ====================
+#! ==================== MODELO 2: RANDOM FOREST ====================
 print("\n" + "-" * 80)
 print("MODELO 2: RANDOM FOREST")
 print("-" * 80)
 
-# Pipeline completo: preprocesamiento + modelo
-# Nota: Random Forest no necesita escalado, pero lo incluimos por consistencia
+#! Pipeline completo: preprocesamiento + modelo
+#! Random Forest no necesita escalado, pero lo inlcuyo por consistencia.
 pipeline_rf = Pipeline(steps=[
     ('preprocessor', preprocessor),
     ('model', RandomForestRegressor(
@@ -245,7 +236,7 @@ pipeline_rf.fit(X_train, y_train)
 print("2. Realizando predicciones en conjunto de test...")
 y_pred_rf = pipeline_rf.predict(X_test)
 
-# Calcular métricas
+#! Calcular métricas
 mse_rf = mean_squared_error(y_test, y_pred_rf)
 rmse_rf = np.sqrt(mse_rf)
 mae_rf = mean_absolute_error(y_test, y_pred_rf)
@@ -274,12 +265,12 @@ feature_importance_df = pd.DataFrame({
 }).sort_values('importance', ascending=False)
 print(feature_importance_df.head(10).to_string(index=False))
 
-# ==================== MODELO 3: GRADIENT BOOSTING ====================
+#! ==================== MODELO 3: GRADIENT BOOSTING ====================
 print("\n" + "-" * 80)
 print("MODELO 3: GRADIENT BOOSTING")
 print("-" * 80)
 
-# Pipeline completo: preprocesamiento + modelo
+#! Pipeline completo: preprocesamiento + modelo
 pipeline_gb = Pipeline(steps=[
     ('preprocessor', preprocessor),
     ('model', GradientBoostingRegressor(
@@ -298,7 +289,7 @@ pipeline_gb.fit(X_train, y_train)
 print("2. Realizando predicciones en conjunto de test...")
 y_pred_gb = pipeline_gb.predict(X_test)
 
-# Calcular métricas
+#! Calcular métricas
 mse_gb = mean_squared_error(y_test, y_pred_gb)
 rmse_gb = np.sqrt(mse_gb)
 mae_gb = mean_absolute_error(y_test, y_pred_gb)
@@ -318,7 +309,7 @@ print(f"   - RMSE: ${rmse_gb:,.2f}")
 print(f"   - MAE: ${mae_gb:,.2f}")
 print(f"   - MSE: ${mse_gb:,.2f}")
 
-# Obtener importancia de características
+#! Obtener importancia de características
 print(f"\n4. Importancia de características (Top 10):")
 feature_importance_gb = pipeline_gb.named_steps['model'].feature_importances_
 feature_importance_df = pd.DataFrame({
@@ -327,15 +318,13 @@ feature_importance_df = pd.DataFrame({
 }).sort_values('importance', ascending=False)
 print(feature_importance_df.head(10).to_string(index=False))
 
-# ============================================================================
-# COMPARACIÓN FINAL DE MODELOS
-# ============================================================================
+#! COMPARACIÓN FINAL DE MODELOS
 
 print("\n" + "=" * 80)
 print("COMPARACIÓN FINAL DE MODELOS")
 print("=" * 80)
 
-# Crear tabla de comparación
+#! TABLA COMPARATIVA
 comparacion_df = pd.DataFrame(resultados).T
 comparacion_df = comparacion_df[['R²', 'RMSE', 'MAE', 'MSE']]
 
@@ -343,7 +332,6 @@ print("\n1. TABLA COMPARATIVA NUMÉRICA DE MÉTRICAS:")
 print("-" * 80)
 print(comparacion_df.to_string())
 
-# Crear tabla más visual con formato porcentual
 print("\n2. TABLA COMPARATIVA FORMATEADA:")
 print("-" * 80)
 tabla_visual = comparacion_df.copy()
@@ -353,7 +341,7 @@ tabla_visual['MAE'] = tabla_visual['MAE'].apply(lambda x: f"${x:,.2f}")
 tabla_visual['MSE'] = tabla_visual['MSE'].apply(lambda x: f"${x:,.2f}")
 print(tabla_visual.to_string())
 
-# Análisis de diferencias
+#! Análisis de diferencias
 print("\n3. ANÁLISIS DE DIFERENCIAS ENTRE MODELOS:")
 print("-" * 80)
 
@@ -378,7 +366,7 @@ print(f"  - Mejor: {rmse_scores.index[0]} (${mejor_rmse:,.2f})")
 print(f"  - Peor: {rmse_scores.index[-1]} (${peor_rmse:,.2f})")
 print(f"  - Diferencia: ${diferencia_rmse:,.2f}")
 
-# Ranking
+#! Ranking
 print("\n4. RANKING DE MODELOS (POR R² SCORE):")
 print("-" * 80)
 ranking = comparacion_df['R²'].sort_values(ascending=False)
@@ -447,7 +435,7 @@ print(f"     → Error típico en predicciones (±${mejor_rmse:,.2f})")
 print(f"\n   • MAE: ${mejor_mae:,.2f}")
 print(f"     → Error medio absoluto (±${mejor_mae:,.2f})")
 
-# Porcentaje de error respecto al precio medio
+#! Porcentaje de error respecto al precio medio
 precio_medio = y_test.mean()
 error_porcentaje_mae = (mejor_mae / precio_medio) * 100
 error_porcentaje_rmse = (mejor_rmse / precio_medio) * 100
@@ -599,9 +587,7 @@ obtener estimaciones de precio precisas basadas en características del
 vehículo.
 """)
 
-# ============================================================================
-# PARTE 4: OPTIMIZACIÓN DE HIPERPARÁMETROS DEL MEJOR MODELO
-# ============================================================================
+#! PARTE 4: OPTIMIZACIÓN DE HIPERPARÁMETROS DEL MEJOR MODELO
 
 print("\n" + "=" * 80)
 print("PARTE 4: OPTIMIZACIÓN DE HIPERPARÁMETROS")
@@ -729,16 +715,14 @@ elif mejor_modelo_nombre == 'Gradient Boosting':
     print(f"   - RMSE: ${rmse_final:,.2f}")
     print(f"   - MAE: ${mae_final:,.2f}")
 
-# ============================================================================
-# PARTE 5: EXPORTACIÓN DEL MODELO Y TRANSFORMADORES
-# ============================================================================
+#! PARTE 5: EXPORTACIÓN DEL MODELO Y TRANSFORMADORES
 
 print("\n" + "=" * 80)
 print("PARTE 5: EXPORTACIÓN DEL MODELO Y TRANSFORMADORES")
 print("=" * 80)
 
-# Crear directorio para guardar modelos
-directorio_modelos = 'modelos_exportados'
+#! Directorio donde se guardan los modelos exportados
+directorio_modelos = os.path.join(script_dir, '..', 'modelos_exportados')
 if not os.path.exists(directorio_modelos):
     os.makedirs(directorio_modelos)
     print(f"\n✓ Creado directorio: {directorio_modelos}/")
@@ -746,18 +730,18 @@ if not os.path.exists(directorio_modelos):
 print(f"\n1. EXPORTANDO MODELO FINAL ({mejor_modelo_nombre})")
 print("-" * 80)
 
-# Guardar modelo completo (pipeline) con joblib (más eficiente)
+#! Guardar modelo completo (pipeline) con joblib (más eficiente)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 nombre_modelo = f"modelo_final_{mejor_modelo_nombre.lower().replace(' ', '_')}_{timestamp}"
 
-# Guardar con joblib (recomendado para sklearn)
+#! Guardar con joblib
 ruta_modelo_joblib = os.path.join(directorio_modelos, f"{nombre_modelo}.joblib")
 joblib.dump(modelo_final, ruta_modelo_joblib)
 print(f"\n✓ Modelo completo guardado (joblib):")
 print(f"   Ruta: {ruta_modelo_joblib}")
 print(f"   Tamaño: {os.path.getsize(ruta_modelo_joblib) / (1024*1024):.2f} MB")
 
-# También guardar con pickle por compatibilidad
+#! Tambien guardar con pickle (no se que es pero la documentacion lo menciona)
 ruta_modelo_pickle = os.path.join(directorio_modelos, f"{nombre_modelo}.pkl")
 with open(ruta_modelo_pickle, 'wb') as f:
     pickle.dump(modelo_final, f)
@@ -765,9 +749,7 @@ print(f"\n✓ Modelo completo guardado (pickle - compatibilidad):")
 print(f"   Ruta: {ruta_modelo_pickle}")
 print(f"   Tamaño: {os.path.getsize(ruta_modelo_pickle) / (1024*1024):.2f} MB")
 
-# ============================================================================
-# Exportar SOLO el preprocessor (para hacer predicciones sin reentrenar)
-# ============================================================================
+#! Exportar SOLO el preprocessor (para hacer predicciones sin reentrenar)
 
 print(f"\n2. EXPORTANDO PREPROCESSADOR (TRANSFORMADORES)")
 print("-" * 80)
@@ -781,9 +763,7 @@ print(f"\n   Incluye:")
 print(f"   - StandardScaler para variables numéricas: {numeric_features}")
 print(f"   - OneHotEncoder para variables categóricas: {categorical_features}")
 
-# ============================================================================
-# Exportar el modelo entrenado (SOLO el componente del modelo)
-# ============================================================================
+#! Exportar el modelo entrenado
 
 print(f"\n3. EXPORTANDO MODELO DE MACHINE LEARNING (SOLO EL MODELO)")
 print("-" * 80)
@@ -796,9 +776,7 @@ print(f"   Ruta: {ruta_modelo_ml}")
 print(f"   Tamaño: {os.path.getsize(ruta_modelo_ml) / (1024*1024):.2f} MB")
 print(f"   (Para usar después con preprocessor guardado)")
 
-# ============================================================================
-# Guardar metadatos del modelo
-# ============================================================================
+#! Guardado de metadatos (por si acaso)
 
 print(f"\n4. GUARDANDO METADATOS DEL MODELO")
 print("-" * 80)
@@ -841,9 +819,7 @@ print(f"   - RMSE: ${metadatos['metricas']['rmse']:,.2f}")
 print(f"   - MAE: ${metadatos['metricas']['mae']:,.2f}")
 print(f"   - Rango de precios: ${metadatos['variables_precio']['min']:,.0f} - ${metadatos['variables_precio']['max']:,.0f}")
 
-# ============================================================================
-# Guardar información de las clases categóricas
-# ============================================================================
+#! Guardar información de las clases categóricas
 
 print(f"\n5. GUARDANDO DICCIONARIOS DE CATEGORÍAS")
 print("-" * 80)
@@ -867,103 +843,19 @@ print(f"\n   Resumen de categorías:")
 for cat, info in categorias_info.items():
     print(f"   - {cat}: {info['num_clases']} clases")
 
-# ============================================================================
-# Crear script de ejemplo para cargar y usar el modelo
-# ============================================================================
+#! Crear script de ejemplo para cargar y usar el modelo (Hecho con IA)
 
 print(f"\n6. CREANDO SCRIPT DE EJEMPLO PARA CARGAR EL MODELO")
 print("-" * 80)
 
-script_ejemplo = '''"""
-SCRIPT DE EJEMPLO: Cómo cargar y usar el modelo exportado
-"""
-
-import joblib
-import pandas as pd
-import json
-
-# ============================================================================
-# PASO 1: Cargar el modelo completo (opción más simple)
-# ============================================================================
-
-print("Opción 1: Usar el modelo COMPLETO (pipeline incluido)")
-print("=" * 60)
-
-# Cargar el modelo entrenado
-modelo = joblib.load('modelos_exportados/modelo_final_*.joblib')
-
-# Hacer una predicción
-datos_nuevos = pd.DataFrame({
-    'year': [2020],
-    'mileage': [50000],
-    'engineSize': [2.0],
-    'transmission': ['Automatic'],
-    'fuelType': ['Petrol'],
-    'brand': ['BMW'],
-    'model': ['Series 5']
-})
-
-prediccion = modelo.predict(datos_nuevos)
-print(f"Precio predicho: ${prediccion[0]:,.2f}")
-
-# ============================================================================
-# PASO 2: Cargar componentes por separado (opción más flexible)
-# ============================================================================
-
-print("\\nOpción 2: Cargar preprocessor y modelo por separado")
-print("=" * 60)
-
-# Cargar componentes
-preprocessor = joblib.load('modelos_exportados/preprocessor.joblib')
-modelo_ml = joblib.load('modelos_exportados/modelo_ml_*.joblib')
-
-# Transformar datos
-X_procesados = preprocessor.transform(datos_nuevos)
-
-# Hacer predicción
-prediccion = modelo_ml.predict(X_procesados)
-print(f"Precio predicho: ${prediccion[0]:,.2f}")
-
-# ============================================================================
-# PASO 3: Acceder a metadatos del modelo
-# ============================================================================
-
-print("\\nPaso 3: Acceder a información del modelo")
-print("=" * 60)
-
-# Cargar metadatos
-with open('modelos_exportados/metadatos_modelo.json', 'r') as f:
-    metadatos = json.load(f)
-
-print(f"Nombre del modelo: {metadatos['nombre_modelo']}")
-print(f"R² Score: {metadatos['metricas']['r2_score']:.4f}")
-print(f"RMSE: ${metadatos['metricas']['rmse']:,.2f}")
-
-# Cargar mapeo de categorías
-with open('modelos_exportados/categorias_mapping.json', 'r') as f:
-    categorias = json.load(f)
-
-print(f"\\nCategorías disponibles en 'transmission': {categorias['transmission']['clases']}")
-'''
-
-ruta_script = os.path.join(directorio_modelos, "ejemplo_uso_modelo.py")
-with open(ruta_script, 'w', encoding='utf-8') as f:
-    f.write(script_ejemplo)
-
-print(f"\n✓ Script de ejemplo creado:")
-print(f"   Ruta: {ruta_script}")
-print(f"   Contiene instrucciones para cargar y usar el modelo")
-
-# ============================================================================
-# RESUMEN FINAL
-# ============================================================================
+#! Resumen Final
 
 print("\n" + "=" * 80)
 print("RESUMEN DE ARCHIVOS EXPORTADOS")
 print("=" * 80)
 
-print(f"\n📁 Directorio: {os.path.abspath(directorio_modelos)}/")
-print("\n📄 Archivos generados:\n")
+print(f"\n Directorio: {os.path.abspath(directorio_modelos)}/")
+print("\n Archivos generados:\n")
 
 archivos = os.listdir(directorio_modelos)
 for i, archivo in enumerate(sorted(archivos), 1):
@@ -972,8 +864,8 @@ for i, archivo in enumerate(sorted(archivos), 1):
     print(f"{i}. {archivo}")
     print(f"   └─ Tamaño: {tamaño / 1024:.2f} KB")
 
-print(f"\n✓ Todos los archivos necesarios han sido guardados correctamente")
-print(f"✓ El modelo está listo para ser usado en la aplicación web")
+print(f"\n Todos los archivos necesarios han sido guardados correctamente")
+print(f" El modelo está listo para ser usado en la aplicación web")
 
 print("\n" + "=" * 80)
 

@@ -8,10 +8,7 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
-# ============================================================================
-# CONFIGURACIÓN DE LA PÁGINA STREAMLIT
-# ============================================================================
-
+#! Configuraciones principales.
 st.set_page_config(
     page_title="🚗 Predictor de Precios de Vehículos Mercedes",
     page_icon="🚗",
@@ -19,9 +16,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ============================================================================
-# ESTILOS CSS PERSONALIZADOS
-# ============================================================================
+#! Estilos de la página.
 
 st.markdown("""
 <style>
@@ -83,16 +78,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ============================================================================
-# FUNCIONES DE UTILIDAD
-# ============================================================================
+#! Funciones.
 
 @st.cache_resource
 def cargar_modelo_y_componentes():
     """Carga el modelo entrenado y sus componentes"""
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        modelos_dir = os.path.join(script_dir, 'modelos_exportados')
+        modelos_dir = os.path.join(script_dir, '..', 'models', 'modelos_exportados')
         
         # Buscar cualquier archivo del modelo (random_forest, gradient_boosting, etc.)
         modelo_files = [f for f in os.listdir(modelos_dir)
@@ -128,38 +121,32 @@ def validar_entrada(data):
     """Valida los datos ingresados por el usuario"""
     errores = []
     
-    # Validar year
-    if data['year'] < 1990 or data['year'] > 2024:
-        errores.append("El año debe estar entre 1990 y 2024")
+    #! Validar año
+    if data['year'] < 1990 or data['year'] > 2020:
+        errores.append("El año debe estar entre 1990 y 2020")
     
-    # Validar mileage
+    #! Validar kilometraje
     if data['mileage'] < 0 or data['mileage'] > 500000:
         errores.append("El kilometraje debe estar entre 0 y 500,000 km")
     
-    # Validar engineSize
+    #! Validar tamaño del motor
     if data['engineSize'] <= 0 or data['engineSize'] > 10:
         errores.append("El tamaño del motor debe estar entre 0.5 y 10 litros")
     
     return errores
 
-# ============================================================================
-# CARGAR DATOS
-# ============================================================================
+#! Carga de datos y modelo
 
 modelo, metadatos, categorias, nombre_modelo = cargar_modelo_y_componentes()
 
-# ============================================================================
-# ENCABEZADO PRINCIPAL
-# ============================================================================
+#! Encabezado
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.markdown('<p class="main-header">🚗 PREDICTOR DE PRECIOS</p>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Estima el precio de tu vehículo Mercedes</p>', unsafe_allow_html=True)
 
-# ============================================================================
-# VERIFICACIÓN DEL MODELO
-# ============================================================================
+#! Comprobaciones sobre el modelo
 
 if modelo is None:
     st.error("""
@@ -172,62 +159,9 @@ if modelo is None:
     """)
     st.stop()
 
-# ============================================================================
-# BARRA LATERAL - INFORMACIÓN DEL MODELO
-# ============================================================================
-
-with st.sidebar:
-    st.markdown("### 📊 Información del Modelo")
-    st.markdown("---")
-    
-    if metadatos:
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric(
-                label="Precisión (R²)",
-                value=f"{metadatos.get('r2_score', 0):.2%}",
-                delta="85.43%"
-            )
-        
-        with col2:
-            st.metric(
-                label="Error Típico",
-                value=f"${metadatos.get('rmse', 0):,.0f}",
-                delta="RMSE"
-            )
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric(
-                label="Error Promedio",
-                value=f"${metadatos.get('mae', 0):,.0f}",
-                delta="MAE"
-            )
-        
-        with col2:
-            st.metric(
-                label="Algoritmo",
-                value="Random Forest",
-                delta="Optimizado"
-            )
-        
-        st.markdown("---")
-        st.markdown("### 📅 Metadata")
-        
-        fecha_entrenamiento = metadatos.get('fecha_entrenamiento', 'No disponible')
-        st.text(f"Entrenado: {fecha_entrenamiento}")
-        st.text(f"Dataset: 13,121 vehículos")
-        st.text(f"Características: 7 variables")
-
-# ============================================================================
-# SECCIÓN PRINCIPAL - FORMULARIO
-# ============================================================================
+#! Formulario (Recogida de datos)
 
 st.markdown("### 📝 Ingresa los datos del vehículo")
-
-# Crear columnas para mejor organización
 col1, col2 = st.columns(2)
 
 with col1:
@@ -236,7 +170,7 @@ with col1:
     year = st.slider(
         "Año de fabricación",
         min_value=1990,
-        max_value=2024,
+        max_value=2020,
         value=2020,
         step=1,
         help="El año en que se fabricó el vehículo"
@@ -263,7 +197,7 @@ with col1:
 with col2:
     st.markdown("#### **Características**")
     
-    # Obtener valores únicos de categorías - CORRECTAMENTE
+    #! Obtener los valores únicos de categorías para evitar que el usuario cometa errores.
     transmission_options = categorias.get('transmission', {}).get('clases', ['Automatic', 'Manual', 'Semi-Auto'])
     fuel_type_options = categorias.get('fuelType', {}).get('clases', ['Petrol', 'Diesel', 'Hybrid'])
     
@@ -279,13 +213,11 @@ with col2:
         help="Tipo de combustible que utiliza"
     )
 
-# ============================================================================
-# SELECCIÓN DE MODELO (Segunda fila)
-# ============================================================================
+#! MODELO
 
 st.markdown("#### **Modelo Mercedes**")
 
-# Obtener modelos disponibles
+#! Obtención de los modelos disponibles
 modelo_options = categorias.get('model', {}).get('clases', [])
 
 model = st.selectbox(
@@ -295,9 +227,7 @@ model = st.selectbox(
     key="model_select"
 )
 
-# ============================================================================
-# BOTÓN DE PREDICCIÓN
-# ============================================================================
+#! Boton de prediccion
 
 st.markdown("---")
 
@@ -310,23 +240,21 @@ with col2:
         type="primary"
     )
 
-# ============================================================================
-# PROCESAMIENTO Y RESULTADOS
-# ============================================================================
+#! Procesamiento de los datos y resultado de los mismos.
 
 if boton_prediccion:
-    # Recolectar datos
+    #! Recolectar datos
     datos_entrada = {
         'year': int(year),
         'mileage': int(mileage),
         'engineSize': float(engine_size),
         'transmission': transmission,
         'fuelType': fuel_type,
-        'brand': 'Mercedes',  # Siempre Mercedes
+        'brand': 'Mercedes',  #! Siempre Mercedes
         'model': model
     }
     
-    # Validar entrada
+    #! Validar entrada
     errores = validar_entrada(datos_entrada)
     
     if errores:
@@ -337,26 +265,26 @@ if boton_prediccion:
         st.markdown('</div>', unsafe_allow_html=True)
     
     else:
-        # Crear DataFrame para predicción
+        #! Crear DataFrame para predicción
         df_prediccion = pd.DataFrame([datos_entrada])
         
         try:
-            # Realizar predicción
+            #! Realizar predicción
             with st.spinner("🔄 Procesando predicción..."):
                 precio_predicho = modelo.predict(df_prediccion)[0]
             
-            # Mostrar resultado
+            #! Mostrar resultado
             st.markdown('<div class="result-box">', unsafe_allow_html=True)
             
             st.markdown("### ✅ Predicción Completada")
             
-            # Precio principal
+            #! Precio principal
             st.markdown(f'<div class="price-display">{formatear_precio(precio_predicho)}</div>', 
                        unsafe_allow_html=True)
             
             st.markdown("---")
             
-            # Detalles de la predicción
+            #! Detalles sobre la predicción
             col1, col2, col3 = st.columns(3)
             
             with col1:
@@ -390,7 +318,6 @@ if boton_prediccion:
             
             st.markdown("---")
             
-            # Datos de entrada confirmados
             st.markdown("### 📋 Datos Ingresados")
             
             col1, col2, col3 = st.columns(3)
@@ -410,7 +337,7 @@ if boton_prediccion:
             
             st.markdown("---")
             
-            # Información adicional
+            #! Información adicional
             st.markdown(f"""
             <div class="info-box">
                 <strong>ℹ️ Acerca de esta predicción:</strong><br>
@@ -428,9 +355,7 @@ if boton_prediccion:
             st.error("Asegúrate de haber ejecutado previamente `python practica_coches_2.py`")
             st.markdown('</div>', unsafe_allow_html=True)
 
-# ============================================================================
-# SECCIÓN INFERIOR - INFORMACIÓN GENERAL
-# ============================================================================
+#! Informacion sobre el uso de la página web para el usuario.
 
 st.markdown("---")
 
@@ -459,10 +384,7 @@ with col2:
     - ✅ **Dataset:** 13,121 vehículos
     """)
 
-# ============================================================================
-# PIE DE PÁGINA
-# ============================================================================
-
+#! Pie de página
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 0.9em;">

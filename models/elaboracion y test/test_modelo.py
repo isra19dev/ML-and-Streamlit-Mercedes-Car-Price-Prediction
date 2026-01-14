@@ -12,10 +12,10 @@ print("=" * 80)
 print("SCRIPT DE PRUEBA: CARGAR Y USAR EL MODELO EXPORTADO")
 print("=" * 80)
 
-# Directorio donde se guardaron los modelos
+#! Directorio donde se guardaron los modelos, creado en practica_coches_2.py
 directorio = 'modelos_exportados'
 
-# Verificar que existe el directorio
+#! Verificar que existe el directorio, y lanza una alternativa en caso de no encontrarlo
 if not os.path.exists(directorio):
     print(f"\n❌ ERROR: No se encontró el directorio '{directorio}'")
     print("   Asegúrate de haber ejecutado practica_coches_2.py primero")
@@ -23,20 +23,18 @@ if not os.path.exists(directorio):
 
 print(f"\n✓ Directorio encontrado: {directorio}/")
 
-# ============================================================================
-# OPCIÓN 1: CARGAR EL MODELO COMPLETO (RECOMENDADO)
-# ============================================================================
+#! OPCIÓN 1: CARGAR EL MODELO COMPLETO (RECOMENDADO), en caso de que se disponga del mismo.
 
 print("\n" + "=" * 80)
 print("OPCIÓN 1: USANDO MODELO COMPLETO")
 print("=" * 80)
 
-# Buscar el archivo de modelo (puede haber varios con timestamps diferentes)
 archivos_modelo = [f for f in os.listdir(directorio) 
                    if f.startswith('modelo_final_') and f.endswith('.joblib')]
 
+#! Si no encuentra el archivo .joblib, lo notifica con un error
 if not archivos_modelo:
-    print("\n❌ ERROR: No se encontró modelo_final_*.joblib")
+    print("\n ERROR: No se encontró modelo_final_*.joblib")
     exit()
 
 archivo_modelo = os.path.join(directorio, archivos_modelo[0])
@@ -44,14 +42,13 @@ archivo_modelo = os.path.join(directorio, archivos_modelo[0])
 print(f"\n1. Cargando modelo: {archivos_modelo[0]}")
 try:
     modelo = joblib.load(archivo_modelo)
-    print("   ✓ Modelo cargado exitosamente")
+    print(" El modelo ha sido cargado con éxito")
 except Exception as e:
-    print(f"   ❌ Error al cargar: {e}")
+    print(f" Hubo un error en la carga del modelo: {e}")
     exit()
 
-# ============================================================================
-# OPCIÓN 2: CARGAR METADATOS
-# ============================================================================
+#! OPCIÓN 2: CARGAR METADATOS
+
 
 print(f"\n2. Cargando metadatos del modelo")
 try:
@@ -68,9 +65,7 @@ try:
 except Exception as e:
     print(f"   ⚠️  Advertencia: {e}")
 
-# ============================================================================
-# OPCIÓN 3: CARGAR MAPEO DE CATEGORÍAS
-# ============================================================================
+#! OPCIÓN 3: CARGAR MAPEO DE CATEGORÍAS
 
 print(f"\n3. Cargando mapeo de categorías")
 try:
@@ -87,15 +82,13 @@ try:
 except Exception as e:
     print(f"   ⚠️  Advertencia: {e}")
 
-# ============================================================================
-# HACER UNA PREDICCIÓN DE PRUEBA
-# ============================================================================
+#! Realización de algunas predicciones de prueba para comprobar el funcionamiento del modelo.
 
 print("\n" + "=" * 80)
 print("PRUEBA DE PREDICCIÓN")
 print("=" * 80)
 
-# Datos de ejemplo 1: Vehículo económico
+#! Vehiculo económico:
 print("\n4. Ejemplo 1: Vehículo económico")
 print("-" * 80)
 
@@ -120,8 +113,8 @@ try:
 except Exception as e:
     print(f"\n❌ Error en predicción: {e}")
 
-# Datos de ejemplo 2: Vehículo premium
-print("\n\n5. Ejemplo 2: Vehículo premium")
+#! Vehículo de alta gama:
+print("\n\n5. Ejemplo 2: Vehículo de alta gama")
 print("-" * 80)
 
 datos2 = {
@@ -145,7 +138,7 @@ try:
 except Exception as e:
     print(f"\n❌ Error en predicción: {e}")
 
-# Datos de ejemplo 3: Vehículo diesel
+#! Vehículo de diésel::
 print("\n\n6. Ejemplo 3: Vehículo diesel")
 print("-" * 80)
 
@@ -170,9 +163,7 @@ try:
 except Exception as e:
     print(f"\n❌ Error en predicción: {e}")
 
-# ============================================================================
-# HACER PREDICCIÓN EN LOTE (BATCH)
-# ============================================================================
+#! Y se realiza una predicción en lote para no tener que ir vehículo por vehículo.
 
 print("\n\n" + "=" * 80)
 print("PREDICCIÓN EN LOTE (Batch Prediction)")
