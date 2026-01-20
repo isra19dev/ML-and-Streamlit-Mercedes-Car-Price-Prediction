@@ -1,13 +1,13 @@
-# Predicción de Precios de Vehículos Mercedes con ML
+# Mercedes Vehicle Price Prediction with ML
 
-Una aplicación web interactiva para predecir precios de vehículos Mercedes utilizando Machine Learning. Desarrollada con Streamlit y modelos de Gradient Boosting.
+An interactive web application for predicting Mercedes vehicle prices using Machine Learning. Built with Streamlit and Gradient Boosting models.
 
-## Características
+## Features
 
-- Predicción de precios
-- Interfaz web simple e intuitiva: desarrollada con Streamlit
-- Análisis exploratorio de datos (EDA) incluido
-- Modelo preentrenado listo para usar
-- Preprocesamiento automático de datos
+- Price prediction
+- Simple and intuitive web interface built with Streamlit
+- Included Exploratory Data Analysis (EDA)
+- Pre-trained model ready to use
+- Automatic data preprocessing
 
-*SE RECOMIENDA QUE EL USUARIO TENGA EL NAVEGADOR EN MODO OSCURO PARA UNA MEJOR EXPERIENCIA*
+*IT IS RECOMMENDED THAT USERS ENABLE DARK MODE IN THEIR BROWSER FOR A BETTER EXPERIENCE*
